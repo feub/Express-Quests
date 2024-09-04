@@ -10,6 +10,16 @@ describe("GET /api/movies", () => {
 
     expect(response.status).toEqual(200);
   });
+
+  it("should return an error", async () => {
+    const movieWithMissingProps = { title: "Harry Potter" };
+
+    const response = await request(app)
+      .post("/api/movies")
+      .send(movieWithMissingProps);
+
+    expect(response.status).toEqual(422);
+  });
 });
 
 describe("GET /api/movies/:id", () => {
@@ -25,6 +35,16 @@ describe("GET /api/movies/:id", () => {
     const response = await request(app).get("/api/movies/0");
 
     expect(response.status).toEqual(404);
+  });
+
+  it("should return an error", async () => {
+    const movieWithMissingProps = { title: "Harry Potter" };
+
+    const response = await request(app)
+      .put(`/api/movies/1`)
+      .send(movieWithMissingProps);
+
+    expect(response.status).toEqual(422);
   });
 });
 

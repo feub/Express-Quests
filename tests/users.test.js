@@ -10,6 +10,16 @@ describe("GET /api/users", () => {
 
     expect(response.status).toEqual(200);
   });
+
+  it("should return an error", async () => {
+    const userWithMissingProps = { firstname: "Harry" };
+
+    const response = await request(app)
+      .post("/api/users")
+      .send(userWithMissingProps);
+
+    expect(response.status).toEqual(422);
+  });
 });
 
 describe("GET /api/users/:id", () => {
@@ -25,6 +35,16 @@ describe("GET /api/users/:id", () => {
     const response = await request(app).get("/api/users/0");
 
     expect(response.status).toEqual(404);
+  });
+
+  it("should return an error", async () => {
+    const userWithMissingProps = { firstname: "Harry" };
+
+    const response = await request(app)
+      .put(`/api/users/1`)
+      .send(userWithMissingProps);
+
+    expect(response.status).toEqual(422);
   });
 });
 
