@@ -3,10 +3,10 @@ const database = require("../../database");
 const getMovies = (req, res) => {
   const qs = req.query.color;
   const max_duration = parseInt(req.query.max_duration);
-  let initialSql = "SELECT * FROM movies";
-  let where = [];
+  const initialSql = "SELECT * FROM movies";
+  const where = [];
 
-  if (qs != null) {
+  if (qs) {
     where.push({
       column: "color",
       value: qs,
@@ -14,7 +14,7 @@ const getMovies = (req, res) => {
     });
   }
 
-  if (max_duration != null) {
+  if (max_duration) {
     where.push({
       column: "duration",
       value: max_duration,
@@ -26,7 +26,7 @@ const getMovies = (req, res) => {
     .query(
       where.reduce(
         (sql, { column, operator }, index) =>
-          `${sql} ${index === 0 ? "where" : "and"} ${column} ${operator} ?`,
+          `${sql} ${index === 0 ? "WHERE" : "AND"} ${column} ${operator} ?`,
         initialSql,
       ),
       where.map(({ value }) => value),
@@ -58,7 +58,25 @@ const getMovieById = (req, res) => {
     });
 };
 
+const postMovie = (req, res) => {
+  const { title, director, year, color, duration } = req.body;
+
+  database
+    .query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
+      [title, director, year, color, duration],
+    )
+    .then(([result]) => {
+      res.status(201).send({ id: result.insertId });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error retrieving data from database");
+    });
+};
+
 module.exports = {
   getMovies,
   getMovieById,
+  postMovie,
 };
